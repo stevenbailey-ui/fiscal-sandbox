@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chancellor's Ledger — UK Fiscal Sandbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f2e9; --paper2:#efe9db; --ink:#1c1a17; --oxblood:#7d2230;
+    --oxblood-deep:#5c1822; --surplus:#2f6b4f; --deficit:#a8323f;
+    --rule:#d8cfbe; --rule2:#cabda6; --muted:#6b6256; --gold:#9a7b2e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:15px; line-height:1.45;
+    background-image:radial-gradient(circle at 1px 1px, rgba(124,34,48,.04) 1px, transparent 0);
+    background-size:22px 22px;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+  h1,h2,h3{font-family:'Newsreader',serif;font-weight:500;line-height:1.1}
+  /* Header */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:linear-gradient(180deg,var(--oxblood),var(--oxblood-deep));
+    color:#f3e7d8;border-bottom:3px solid var(--gold);
+    padding:14px 22px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+    box-shadow:0 2px 14px rgba(0,0,0,.18);
+  }
+  header .brand h1{font-size:25px;color:#fbf3e6;letter-spacing:.3px}
+  header .brand h1 i{color:var(--gold);font-style:italic;font-weight:400}
+  header .brand p{font-size:11.5px;color:#e0c9bc;letter-spacing:.5px;text-transform:uppercase;margin-top:1px}
+  header .headline{margin-left:auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .pill{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.14);border-radius:3px;padding:6px 13px;text-align:right}
+  .pill .lab{font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:#e7d3bf;opacity:.85}
+  .pill .val{font-size:20px;font-weight:600}
+  .btn{background:var(--gold);color:#2b2208;border:none;border-radius:3px;padding:7px 14px;font-family:'IBM Plex Sans';font-weight:600;font-size:12.5px;cursor:pointer;letter-spacing:.3px}
+  .btn.ghost{background:transparent;color:#f3e7d8;border:1px solid rgba(255,255,255,.3)}
+  .btn:hover{filter:brightness(1.06)}
+  /* Layout */
+  .wrap{max-width:1340px;margin:0 auto;padding:22px;display:grid;grid-template-columns:minmax(360px,420px) 1fr;gap:24px;align-items:start}
+  @media(max-width:980px){.wrap{grid-template-columns:1fr}}
+  .panel{background:rgba(255,255,255,.55);border:1px solid var(--rule);border-radius:5px;overflow:hidden}
+  .panel>.head{background:var(--paper2);border-bottom:1px solid var(--rule);padding:10px 16px;display:flex;align-items:baseline;gap:10px}
+  .panel>.head h2{font-size:19px}
+  .panel>.head .sub{font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:.4px}
+  .panel .body{padding:6px 16px 16px}
+  /* Control groups */
+  .group{border-bottom:1px solid var(--rule);padding:11px 0}
+  .group:last-child{border-bottom:none}
+  .group>summary{cursor:pointer;list-style:none;font-family:'Newsreader',serif;font-size:16px;font-weight:500;display:flex;align-items:center;gap:8px;padding:3px 0;color:var(--oxblood-deep)}
+  .group>summary::-webkit-details-marker{display:none}
+  .group>summary::before{content:"▸";color:var(--gold);font-size:12px;transition:transform .15s}
+  .group[open]>summary::before{transform:rotate(90deg)}
+  .group>summary .gsum{margin-left:auto;font-family:'IBM Plex Mono';font-size:12px;color:var(--muted)}
+  .lever{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:8px 0 9px;border-top:1px dotted var(--rule)}
+  .lever:first-of-type{border-top:none}
+  .lever .l-name{font-size:13px}
+  .lever .l-name small{display:block;color:var(--muted);font-size:10.5px;line-height:1.3}
+  .lever .l-val{font-family:'IBM Plex Mono';font-weight:600;font-size:13.5px;text-align:right;white-space:nowrap}
+  .lever .l-impact{font-family:'IBM Plex Mono';font-size:11.5px;text-align:right;grid-column:2}
+  .lever input[type=range]{grid-column:1/3;width:100%;height:18px;-webkit-appearance:none;background:transparent;margin-top:2px}
+  input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--rule2);border-radius:2px}
+  input[type=range]::-moz-range-track{height:3px;background:var(--rule2);border-radius:2px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--oxblood);border:2px solid var(--paper);margin-top:-6px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--oxblood);border:2px solid var(--paper);cursor:pointer}
+  .pos{color:var(--surplus)} .neg{color:var(--deficit)}
+  .reset-mini{font-size:10px;color:var(--oxblood);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:inherit}
+  /* Cards */
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+  @media(max-width:620px){.cards{grid-template-columns:repeat(2,1fr)}}
+  .card{background:rgba(255,255,255,.6);border:1px solid var(--rule);border-left:4px solid var(--oxblood);border-radius:4px;padding:11px 13px}
+  .card .lab{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+  .card .big{font-family:'IBM Plex Mono';font-size:25px;font-weight:600;margin-top:3px;letter-spacing:-.5px}
+  .card .delta{font-family:'IBM Plex Mono';font-size:11.5px;margin-top:1px}
+  /* Tables */
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--rule)}
+  th:first-child,td:first-child{text-align:left}
+  thead th{font-family:'IBM Plex Sans';font-weight:600;font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);border-bottom:1.5px solid var(--rule2)}
+  tbody td{font-family:'IBM Plex Mono';font-variant-numeric:tabular-nums}
+  tbody tr:hover{background:rgba(124,34,48,.04)}
+  tfoot td{font-family:'IBM Plex Mono';font-weight:600;border-top:1.5px solid var(--rule2);border-bottom:none}
+  .note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:10px;border-top:1px dotted var(--rule);padding-top:9px}
+  .note b{color:var(--oxblood-deep)}
+  .chartbox{padding:6px 4px 0}
+  svg text{font-family:'IBM Plex Mono';font-size:10px;fill:var(--muted)}
+  .stack{display:flex;flex-direction:column;gap:18px}
+  .seg{display:inline-flex;border:1px solid var(--rule2);border-radius:3px;overflow:hidden;margin-left:auto}
+  .seg button{background:transparent;border:none;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer;color:var(--muted)}
+  .seg button.on{background:var(--oxblood);color:#fbf3e6}
+  footer{max-width:1340px;margin:0 auto;padding:6px 22px 30px;font-size:10.5px;color:var(--muted);line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>The Chancellor's <i>Ledger</i></h1>
+    <p>UK Fiscal Sandbox · static incidence model</p>
+  </div>
+  <div class="headline">
+    <div class="pill"><div class="lab">Balance, this year</div><div class="val mono" id="hl-bal">—</div></div>
+    <div class="pill"><div class="lab">Debt / GDP, yr 5</div><div class="val mono" id="hl-debt">—</div></div>
+    <button class="btn ghost" id="btn-export">Copy scenario</button>
+    <button class="btn" id="btn-reset">Reset</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- ============ CONTROLS ============ -->
+  <div class="panel">
+    <div class="head"><h2>Policy levers</h2><span class="sub" id="ctl-baseyear">baseline 2025–26</span></div>
+    <div class="body" id="controls"><!-- built by JS --></div>
+  </div>
+
+  <!-- ============ OUTPUTS ============ -->
+  <div class="stack">
+    <div class="cards" id="cards"></div>
+
+    <div class="panel">
+      <div class="head"><h2>Five-year projection</h2>
+        <div class="seg" id="chart-toggle">
+          <button data-c="balance" class="on">Balance</button>
+          <button data-c="debt">Debt/GDP</button>
+        </div>
+      </div>
+      <div class="body">
+        <div class="chartbox"><svg id="chart" viewBox="0 0 640 200" width="100%" height="200" preserveAspectRatio="none"></svg></div>
+        <table id="proj">
+          <thead><tr><th>Year</th><th>GDP</th><th>Receipts</th><th>Spending</th><th>Balance</th><th>Debt</th><th>Debt/GDP</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="note"><b>How it works.</b> Aggregate tax effects use HMRC ready-reckoner coefficients (£bn per 1p / 1ppt / £ change). Receipts grow with nominal GDP; non-interest spending grows with the inflation + real-spend assumptions; debt interest = your effective rate × prior-year debt; the deficit is added to debt each year. <b>No behavioural, growth or investment feedback is modelled</b> — these are deliberately excluded as unforecastable. Accurate for modest changes only.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="head"><h2>Effect on disposable income</h2><span class="sub">employee, by gross pay</span></div>
+      <div class="body">
+        <table id="dist">
+          <thead><tr><th>Gross pay</th><th>Net now</th><th>Net after</th><th>Δ / yr</th><th>Δ %</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="note" id="dist-note"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Sources: OBR <i>Economic &amp; Fiscal Outlook</i> / <i>Brief Guide to the Public Finances</i> (2025–26 baseline: receipts £1,235bn, TME £1,368bn, deficit £133bn, debt ≈£2.9tn / 94% GDP); HMRC <i>Direct effects of illustrative tax changes</i> (ready-reckoner coefficients); HoC Library / HM Treasury PESA (functional spending). Coefficients and baselines are held in clearly-commented constants near the top of the script — update them from each new HMRC bulletin. Illustrative model; not advice or an official forecast.
+</footer>
+
+<script>
+"use strict";
+/* ============================================================
+   BASELINE + COEFFICIENTS  — edit here when new data is published
+   All £ figures in £ billion unless noted. Year-0 = FY2025-26.
+   ============================================================ */
+const BASE = {
+  gdp: 3055,      // nominal GDP, £bn
+  debt: 2881,     // public sector net debt, £bn (≈94.3% of GDP, end FY2025-26)
+  receipts: 1235, // total current receipts, £bn (OBR)
+  tme: 1368,      // total managed expenditure, £bn (OBR)
+  interest0: 110  // baseline debt interest, £bn (≈3.8% of debt)
+};
+
+// Macro assumption defaults (%)
+const MACRO0 = { realGrowth:1.5, inflation:2.0, intRate:3.8, spendReal:0.0, horizon:5 };
+
+/* TAX LEVERS
+   coeff = £bn revenue per `unit` of change (HMRC ready-reckoner style).
+   For thresholds, raising the threshold LOSES revenue -> coeff is negative.
+   unit: change of `step`*`per` ; impact = ((val-base)/per)*coeff           */
+const TAXES = [
+  // id,            label,                         base, min,  max,   step, per,  unit,        coeff, note
+  ["itBasic",  "Income tax — basic rate",          20,   15,   30,    1,    1,   "%",          7.0,  "+1p ≈ £7.0bn"],
+  ["itHigher", "Income tax — higher rate",         40,   35,   50,    1,    1,   "%",          1.6,  "+1p ≈ £1.6bn"],
+  ["itAddl",   "Income tax — additional rate",     45,   40,   60,    1,    1,   "%",          0.15, "+1p ≈ £0.15bn"],
+  ["pa",       "Personal allowance",            12570, 8000,18000,  500, 1000, "£",         -7.0,  "+£1,000 loses ≈£7.0bn"],
+  ["hrt",      "Higher-rate threshold",         50270,40000,80000, 1000, 1000, "£",         -1.0,  "+£1,000 loses ≈£1.0bn (coarse)"],
+  ["niMain",   "Employee NIC — main rate",          8,    0,   15,    1,    1,   "%",          5.0,  "+1ppt ≈ £5.0bn"],
+  ["niUpper",  "Employee NIC — upper rate",         2,    0,   10,    1,    1,   "%",          0.9,  "+1ppt ≈ £0.9bn"],
+  ["erNic",    "Employer NIC rate",                15,   10,   20,    1,    1,   "%",          8.5,  "+1ppt ≈ £8.5bn"],
+  ["vat",      "VAT — standard rate",              20,   10,   25,    1,    1,   "%",          8.8,  "+1ppt ≈ £8.8bn"],
+  ["corp",     "Corporation tax — main rate",      25,   15,   35,    1,    1,   "%",          3.8,  "+1ppt ≈ £3.8bn"],
+  ["cgt",      "Capital gains tax (avg rate)",     24,   10,   45,    1,    1,   "%",          0.4,  "+1ppt ≈ £0.4bn (behaviourally sensitive)"],
+  ["fuel",     "Fuel duty",                        52.95, 30,  90,    1,    1,   "p/l",        0.5,  "+1p/l ≈ £0.5bn"],
+  ["counciltax","Council tax (avg level)",        100,   80,  150,    5,    1,   "idx",        0.5,  "+1% ≈ £0.5bn"],
+  ["iht",      "Inheritance tax rate",             40,   20,   60,    1,    1,   "%",          0.2,  "+1ppt ≈ £0.2bn (coarse)"]
+];
+
+/* SPENDING AREAS (£bn). Residual balances to TME. Debt interest is computed. */
+const SPEND = [
+  ["socprot", "Social protection (pensions + welfare)", 400],
+  ["health",  "Health",                                 260],
+  ["educ",    "Education",                               128],
+  ["defence", "Defence",                                  72],
+  ["econ",    "Economic affairs (incl. transport)",       90],
+  ["order",   "Public order & safety",                    48],
+  ["housenv", "Housing & environment",                    35],
+  ["culture", "Recreation, culture & religion",           15],
+  ["genpub",  "General public services (ex-interest)",    42],
+  ["other",   "Other & accounting adjustments",          168]
+];
+// Σ SPEND = 1258 ; +interest0 110 = 1368 = TME ✓
+
+/* Distributional schedule (FY2025-26). Representative gross employment incomes. */
+const INCOMES = [15000,20000,30000,37000,50000,75000,100000,125000,150000,200000];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let tax = {}, spend = {}, macro = {};
+function initState(){
+  tax = {}; TAXES.forEach(t=>tax[t[0]]=t[2]);
+  spend = {}; SPEND.forEach(s=>spend[s[0]]=s[2]);
+  macro = Object.assign({},MACRO0);
+}
+
+/* ============================================================
+   ENGINE
+   ============================================================ */
+function taxDelta(){ // £bn change in receipts vs baseline from all tax levers
+  let d=0;
+  TAXES.forEach(t=>{ const [id,,base,,,,per,,coeff]=t;
+    d += ((tax[id]-base)/per)*coeff; });
+  return d;
+}
+function spendExInterestBase(){ return SPEND.reduce((a,s)=>a+spend[s[0]],0); }
+
+function project(){
+  const yrs = macro.horizon;
+  const nomG = (macro.realGrowth + macro.inflation)/100;
+  const infl = macro.inflation/100;
+  const sReal = macro.spendReal/100;
+  const r = macro.intRate/100;
+  const recv0 = BASE.receipts + taxDelta();
+  const spend0 = spendExInterestBase(); // user-adjusted, year-0 prices
+  let gdp = BASE.gdp, debtPrev = BASE.debt, debt = BASE.debt;
+  const rows=[];
+  for(let y=0;y<=yrs;y++){
+    if(y>0) gdp = gdp*(1+nomG);
+    const gdpScale = gdp/BASE.gdp;
+    const receipts = recv0*gdpScale;
+    const spendExInt = spend0*Math.pow(1+infl+sReal,y);
+    const interest = (y===0) ? BASE.interest0 : r*debtPrev;  // on prior-year close
+    const spending = spendExInt + interest;
+    const balance = receipts - spending;     // negative = deficit
+    debt = (y===0) ? BASE.debt : debtPrev - balance;  // y0 anchored to published level
+    rows.push({y, year:fy(y), gdp, receipts, spending, balance, debt, ratio:debt/gdp*100, interest});
+    debtPrev = debt;
+  }
+  return rows;
+}
+function fy(y){ const s=2025+y; return (s)+"–"+String(s+1).slice(2); }
+
+/* ---- distributional: exact take-home for employee ---- */
+function incomeTaxDue(g, s){
+  let pa = s.pa;
+  if(g>100000) pa = Math.max(0, s.pa - (g-100000)/2);
+  const ti = Math.max(0, g-pa);
+  let t=0;
+  const basicBand = Math.max(0, s.hrt - pa);            // width of basic-rate band
+  const inBasic = Math.min(ti, basicBand);
+  t += inBasic * s.itBasic/100;
+  const addlBand = Math.max(0, 125140 - s.hrt);         // higher-rate band up to £125,140
+  const inHigher = Math.min(Math.max(0,ti-basicBand), addlBand);
+  t += inHigher * s.itHigher/100;
+  const inAddl = Math.max(0, ti - basicBand - addlBand);
+  t += inAddl * s.itAddl/100;
+  return t;
+}
+function niDue(g, s){
+  const PT=12570, UEL=50270;
+  let n=0;
+  n += Math.min(Math.max(0,g-PT), UEL-PT) * s.niMain/100;
+  n += Math.max(0, g-UEL) * s.niUpper/100;
+  return n;
+}
+function sys(state){ return {pa:state.pa,hrt:state.hrt,itBasic:state.itBasic,itHigher:state.itHigher,itAddl:state.itAddl,niMain:state.niMain,niUpper:state.niUpper}; }
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const gbp = (v,dp=0)=> (v<0?"−£":"£")+Math.abs(v).toLocaleString("en-GB",{minimumFractionDigits:dp,maximumFractionDigits:dp})+"bn";
+const fmt0 = v=> v.toLocaleString("en-GB",{maximumFractionDigits:0});
+
+function buildControls(){
+  const c=document.getElementById("controls");
+  // MACRO
+  let h=`<details class="group" open><summary>Macro assumptions <span class="gsum" id="gs-macro"></span></summary>`;
+  const M=[["realGrowth","Real GDP growth","%",-2,4,0.1],["inflation","Inflation (GDP deflator)","%",0,8,0.1],
+           ["intRate","Effective rate on debt","%",0,8,0.1],["spendReal","Real spending growth (all areas)","%",-3,4,0.1],
+           ["horizon","Projection horizon","yr",1,10,1]];
+  M.forEach(m=>{const[id,lab,u,mn,mx,st]=m;
+    h+=`<div class="lever"><div class="l-name">${lab}</div>
+        <div class="l-val" id="v-${id}"></div>
+        <input type="range" data-k="macro" data-id="${id}" min="${mn}" max="${mx}" step="${st}" value="${macro[id]}"></div>`;});
+  h+=`</details>`;
+  // TAX
+  h+=`<details class="group" open><summary>Taxation <span class="gsum" id="gs-tax"></span></summary>`;
+  TAXES.forEach(t=>{const[id,lab,base,mn,mx,st,per,u,coeff,note]=t;
+    h+=`<div class="lever"><div class="l-name">${lab}<small>${note}</small></div>
+        <div class="l-val" id="v-${id}"></div>
+        <div class="l-impact" id="i-${id}"></div>
+        <input type="range" data-k="tax" data-id="${id}" data-u="${u}" min="${mn}" max="${mx}" step="${st}" value="${tax[id]}"></div>`;});
+  h+=`</details>`;
+  // SPEND
+  h+=`<details class="group"><summary>Spending <span class="gsum" id="gs-spend"></span></summary>`;
+  SPEND.forEach(s=>{const[id,lab,base]=s;
+    h+=`<div class="lever"><div class="l-name">${lab}</div>
+        <div class="l-val" id="v-${id}"></div>
+        <div class="l-impact" id="i-${id}"></div>
+        <input type="range" data-k="spend" data-id="${id}" min="${Math.round(base*0.5)}" max="${Math.round(base*1.6)+5}" step="1" value="${spend[id]}"></div>`;});
+  h+=`</details>`;
+  c.innerHTML=h;
+  c.querySelectorAll("input[type=range]").forEach(inp=>inp.addEventListener("input",onInput));
+}
+function onInput(e){
+  const k=e.target.dataset.k, id=e.target.dataset.id, val=parseFloat(e.target.value);
+  if(k==="macro") macro[id]=val; else if(k==="tax") tax[id]=val; else spend[id]=val;
+  render();
+}
+function unitOf(id){ const t=TAXES.find(x=>x[0]===id); return t?t[7]:""; }
+
+function render(){
+  // control readouts
+  ["realGrowth","inflation","intRate","spendReal"].forEach(id=>document.getElementById("v-"+id).textContent=(macro[id]>0?"+":"")+macro[id].toFixed(1)+"%");
+  document.getElementById("v-horizon").textContent=macro.horizon+" yr";
+  let txSum=0;
+  TAXES.forEach(t=>{const[id,,base,,,,per,u,coeff]=t;
+    const val=tax[id]; const imp=((val-base)/per)*coeff; txSum+=imp;
+    const vEl=document.getElementById("v-"+id);
+    vEl.textContent = (u==="£")? "£"+fmt0(val) : (u==="p/l")? val.toFixed(2)+"p" : (u==="idx")? val+"%" : val+"%";
+    const iEl=document.getElementById("i-"+id);
+    iEl.textContent=(imp>=0?"+":"")+gbp(imp,1);
+    iEl.className="l-impact "+(Math.abs(imp)<0.05?"":(imp>0?"pos":"neg"));
+  });
+  let spSum=0;
+  SPEND.forEach(s=>{const[id,,base]=s; const val=spend[id]; const d=val-base; spSum+=d;
+    document.getElementById("v-"+id).textContent="£"+fmt0(val)+"bn";
+    const iEl=document.getElementById("i-"+id);
+    iEl.textContent=(d===0)?"—":(d>0?"+":"")+gbp(d,0);
+    iEl.className="l-impact "+(d===0?"":(d<0?"pos":"neg"));   // less spend = green for balance
+  });
+  document.getElementById("gs-tax").textContent=(txSum>=0?"+":"")+gbp(txSum,1)+" receipts";
+  document.getElementById("gs-tax").className="gsum "+(txSum>=0?"pos":"neg");
+  document.getElementById("gs-spend").textContent=(spSum>=0?"+":"")+gbp(spSum,0)+" spend";
+  document.getElementById("gs-spend").className="gsum "+(spSum<=0?"pos":"neg");
+  document.getElementById("gs-macro").textContent=macro.realGrowth.toFixed(1)+"/"+macro.inflation.toFixed(1)+"/"+macro.intRate.toFixed(1);
+
+  // projection
+  const rows=project();
+  const y1=rows[0], yN=rows[rows.length-1];
+  // headline
+  const balEl=document.getElementById("hl-bal");
+  balEl.textContent=gbp(y1.balance,0); balEl.className="val mono "+(y1.balance>=0?"":"");
+  document.getElementById("hl-debt").textContent=yN.ratio.toFixed(1)+"%";
+
+  // cards (year-0 / this-year static impact vs OBR baseline)
+  const baseBal=-133, baseDebtRatio=BASE.debt/BASE.gdp*100;
+  const cards=[
+    ["Receipts · "+y1.year, gbp(y1.receipts,0), y1.receipts-BASE.receipts, true],
+    ["Spending · "+y1.year, gbp(y1.spending,0), y1.spending-BASE.tme, false],
+    ["Balance · "+y1.year, gbp(y1.balance,0), y1.balance-baseBal, true],
+    ["Debt/GDP · "+yN.year, yN.ratio.toFixed(1)+"%", yN.ratio-baseDebtRatio, false]
+  ];
+  document.getElementById("cards").innerHTML=cards.map(c=>{
+    const [lab,big,delta,goodUp]=c;
+    let dtxt, cls;
+    if(lab.startsWith("Debt")){ dtxt=(delta>=0?"+":"")+delta.toFixed(1)+"pp vs base"; cls=delta<=0?"pos":"neg"; }
+    else { dtxt=(delta>=0?"+":"")+gbp(delta,0)+" vs base"; cls=( (goodUp?delta:-delta) >=0 )?"pos":"neg"; }
+    return `<div class="card"><div class="lab">${lab}</div><div class="big">${big}</div><div class="delta ${cls}">${dtxt}</div></div>`;
+  }).join("");
+
+  // projection table
+  const tb=document.querySelector("#proj tbody");
+  tb.innerHTML=rows.map(r=>`<tr><td>${r.year}</td><td>${fmt0(r.gdp)}</td><td>${fmt0(r.receipts)}</td><td>${fmt0(r.spending)}</td>
+     <td class="${r.balance>=0?'pos':'neg'}">${r.balance>=0?'+':''}${fmt0(r.balance)}</td>
+     <td>${fmt0(r.debt)}</td><td>${r.ratio.toFixed(1)}%</td></tr>`).join("");
+
+  drawChart(rows);
+  renderDist();
+}
+
+/* ---- chart ---- */
+let chartMode="balance";
+function drawChart(rows){
+  const svg=document.getElementById("chart"); const W=640,H=200,pad=34;
+  const xs=i=>pad+(W-pad-10)*(i/(rows.length-1));
+  let vals, isRatio=(chartMode==="debt");
+  vals=rows.map(r=> isRatio? r.ratio : r.balance);
+  let mn=Math.min(...vals,0), mx=Math.max(...vals,0); if(mn===mx)mx=mn+1;
+  if(isRatio){mn=Math.min(...vals); mx=Math.max(...vals);} 
+  const range=mx-mn||1;
+  const ys=v=> (H-pad) - (H-pad-14)*((v-mn)/range);
+  let g="";
+  // zero line for balance
+  if(!isRatio){ const z=ys(0); g+=`<line x1="${pad}" y1="${z}" x2="${W-10}" y2="${z}" stroke="#cabda6" stroke-width="1" stroke-dasharray="3 3"/>`; }
+  // bars (balance) or line (ratio)
+  if(!isRatio){
+    const bw=(W-pad-10)/rows.length*0.62;
+    rows.forEach((r,i)=>{ const x=xs(i)-bw/2, z=ys(0), y=ys(r.balance);
+      const top=Math.min(z,y), hh=Math.abs(y-z);
+      g+=`<rect x="${x}" y="${top}" width="${bw}" height="${hh}" fill="${r.balance>=0?'#2f6b4f':'#a8323f'}" opacity=".85"/>`;
+      g+=`<text x="${xs(i)}" y="${H-6}" text-anchor="middle">${r.year.slice(0,4)}</text>`;
+    });
+  } else {
+    let d=rows.map((r,i)=>`${i?'L':'M'}${xs(i).toFixed(1)} ${ys(r.ratio).toFixed(1)}`).join(" ");
+    g+=`<path d="${d}" fill="none" stroke="#7d2230" stroke-width="2.2"/>`;
+    rows.forEach((r,i)=>{ g+=`<circle cx="${xs(i)}" cy="${ys(r.ratio)}" r="3" fill="#7d2230"/>`;
+      g+=`<text x="${xs(i)}" y="${H-6}" text-anchor="middle">${r.year.slice(0,4)}</text>`; });
+  }
+  // y labels
+  [mn,(mn+mx)/2,mx].forEach(v=>{ g+=`<text x="4" y="${ys(v)+3}">${isRatio?v.toFixed(0)+'%':fmt0(v)}</text>`; });
+  svg.innerHTML=g;
+}
+
+/* ---- distributional ---- */
+function renderDist(){
+  const baseSys = {pa:12570,hrt:50270,itBasic:20,itHigher:40,itAddl:45,niMain:8,niUpper:2};
+  const newSys = sys(tax);
+  const vatDelta=(tax.vat-20);
+  const tb=document.querySelector("#dist tbody");
+  tb.innerHTML=INCOMES.map(g=>{
+    const net0=g-incomeTaxDue(g,baseSys)-niDue(g,baseSys);
+    let net1=g-incomeTaxDue(g,newSys)-niDue(g,newSys);
+    // crude VAT incidence: consumption share falls with income
+    const cShare=Math.max(0.35, 0.95-(g/300000));
+    const vatCost = net1*cShare*(vatDelta/100)/(1+20/100);
+    net1 -= vatCost;
+    const d=net1-net0, pct=d/net0*100;
+    return `<tr><td>£${fmt0(g)}</td><td>£${fmt0(net0)}</td><td>£${fmt0(net1)}</td>
+      <td class="${d>=0?'pos':'neg'}">${d>=0?'+':'−'}£${fmt0(Math.abs(d))}</td>
+      <td class="${d>=0?'pos':'neg'}">${d>=0?'+':''}${pct.toFixed(2)}%</td></tr>`;
+  }).join("");
+  document.getElementById("dist-note").innerHTML=
+   `Exact take-home using your income-tax bands, personal allowance (incl. £100k taper) and employee NIC. "After" also nets a <b>rough</b> VAT effect (assumed consumption share of net income, falling with income) when you move the VAT rate. Employer NIC, corporation tax and indirect incidence beyond VAT are <b>not</b> passed through to households here.`;
+}
+
+/* ---- actions ---- */
+document.getElementById("btn-reset").addEventListener("click",()=>{initState();buildControls();render();});
+document.getElementById("btn-export").addEventListener("click",()=>{
+  const blob=JSON.stringify({tax,spend,macro},null,1);
+  if(navigator.clipboard) navigator.clipboard.writeText(blob).then(()=>{
+    const b=document.getElementById("btn-export"); const o=b.textContent; b.textContent="Copied ✓"; setTimeout(()=>b.textContent=o,1400);
+  }); else alert(blob);
+});
+document.querySelectorAll("#chart-toggle button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#chart-toggle button").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on"); chartMode=b.dataset.c; drawChart(project());
+}));
+
+/* ---- go ---- */
+initState(); buildControls(); render();
+</script>
+</body>
+</html>
