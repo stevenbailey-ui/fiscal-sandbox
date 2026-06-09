@@ -1,1 +1,498 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Chancellor's Ledger — UK Fiscal Sandbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f6f2e9;--paper2:#efe9db;--ink:#1c1a17;--ox:#7d2230;--ox2:#5c1822;
+  --sur:#2f6b4f;--def:#a8323f;--rule:#d8cfbe;--rule2:#cabda6;--muted:#6b6256;
+  --gold:#9a7b2e;--cdel:#2a5c8a;--rdel:#4a7c5a;--ame:#7a4a2a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:14.5px;line-height:1.45;
+  background-image:radial-gradient(circle at 1px 1px,rgba(124,34,48,.035) 1px,transparent 0);background-size:22px 22px}
+h1,h2,h3{font-family:'Newsreader',serif;font-weight:500;line-height:1.1}
+header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,var(--ox),var(--ox2));
+  color:#f3e7d8;border-bottom:3px solid var(--gold);padding:12px 20px;display:flex;align-items:center;
+  gap:16px;flex-wrap:wrap;box-shadow:0 2px 14px rgba(0,0,0,.2)}
+.brand h1{font-size:23px;color:#fbf3e6;letter-spacing:.3px}
+.brand h1 i{color:var(--gold);font-style:italic;font-weight:400}
+.brand p{font-size:10.5px;color:#e0c9bc;letter-spacing:.6px;text-transform:uppercase;margin-top:1px}
+.hl{margin-left:auto;display:flex;gap:11px;align-items:center;flex-wrap:wrap}
+.pill{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.13);border-radius:3px;padding:5px 11px;text-align:right}
+.pill .lab{font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:#e7d3bf;opacity:.85}
+.pill .val{font-size:18px;font-weight:600;font-family:'IBM Plex Mono';letter-spacing:-.5px}
+.btn{background:var(--gold);color:#2b2208;border:none;border-radius:3px;padding:6px 12px;font-family:'IBM Plex Sans';font-weight:600;font-size:12px;cursor:pointer;letter-spacing:.2px}
+.btn.g{background:transparent;color:#f3e7d8;border:1px solid rgba(255,255,255,.28)}
+.btn:hover{filter:brightness(1.06)}
+.wrap{max-width:1380px;margin:0 auto;padding:20px;display:grid;grid-template-columns:minmax(340px,410px) 1fr;gap:22px;align-items:start}
+@media(max-width:960px){.wrap{grid-template-columns:1fr}}
+.panel{background:rgba(255,255,255,.52);border:1px solid var(--rule);border-radius:5px;overflow:hidden}
+.panel>.hd{background:var(--paper2);border-bottom:1px solid var(--rule);padding:9px 15px;display:flex;align-items:baseline;gap:10px}
+.panel>.hd h2{font-size:18px}
+.panel>.hd .sub{font-size:10.5px;color:var(--muted);margin-left:auto;letter-spacing:.4px}
+.panel .bd{padding:5px 15px 14px}
+.grp{border-bottom:1px solid var(--rule);padding:8px 0}
+.grp:last-child{border-bottom:none}
+.grp>summary{cursor:pointer;list-style:none;font-family:'Newsreader',serif;font-size:15px;font-weight:500;
+  display:flex;align-items:center;gap:8px;padding:3px 0;color:var(--ox2)}
+.grp>summary::-webkit-details-marker{display:none}
+.grp>summary::before{content:"▸";color:var(--gold);font-size:11px;transition:transform .15s;flex-shrink:0}
+.grp[open]>summary::before{transform:rotate(90deg)}
+.grp>summary .gsum{margin-left:auto;font-family:'IBM Plex Mono';font-size:11.5px;color:var(--muted)}
+.lev{display:grid;grid-template-columns:1fr auto;gap:1px 8px;padding:7px 0 8px;border-top:1px dotted var(--rule)}
+.lev:first-of-type{border-top:none}
+.lev .ln{font-size:12.5px}
+.lev .ln small{display:block;color:var(--muted);font-size:10px;line-height:1.3;margin-top:1px}
+.lev .lv{font-family:'IBM Plex Mono';font-weight:600;font-size:13px;text-align:right;white-space:nowrap}
+.lev .li{font-family:'IBM Plex Mono';font-size:11px;text-align:right;grid-column:2}
+.lev input[type=range]{grid-column:1/3;width:100%;height:16px;-webkit-appearance:none;background:transparent;margin-top:1px}
+input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--rule2);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+  background:var(--ox);border:2px solid var(--paper);margin-top:-5.5px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+input[type=range]::-moz-range-track{height:3px;background:var(--rule2);border-radius:2px}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--ox);border:2px solid var(--paper);cursor:pointer}
+.pos{color:var(--sur)}.neg{color:var(--def)}
+.type-tag{display:inline-block;font-size:9px;letter-spacing:.5px;padding:1px 5px;border-radius:2px;margin-left:4px;font-family:'IBM Plex Sans';font-weight:600;vertical-align:middle}
+.t-ame{background:#f3e3d0;color:var(--ame)}.t-rdel{background:#d5e8d8;color:var(--rdel)}.t-cdel{background:#d0def0;color:var(--cdel)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px}
+@media(max-width:600px){.cards{grid-template-columns:repeat(2,1fr)}}
+.card{background:rgba(255,255,255,.58);border:1px solid var(--rule);border-left:4px solid var(--ox);border-radius:4px;padding:10px 12px}
+.card.curr{border-left-color:var(--cdel)}
+.card .lab{font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.card .big{font-family:'IBM Plex Mono';font-size:22px;font-weight:600;margin-top:3px;letter-spacing:-.5px}
+.card .dlt{font-family:'IBM Plex Mono';font-size:11px;margin-top:2px}
+.seg{display:inline-flex;border:1px solid var(--rule2);border-radius:3px;overflow:hidden;margin-left:auto}
+.seg button{background:transparent;border:none;padding:3px 9px;font:inherit;font-size:10.5px;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--ox);color:#fbf3e6}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:5px 7px;text-align:right;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+thead th{font-family:'IBM Plex Sans';font-weight:600;font-size:10px;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--muted);border-bottom:1.5px solid var(--rule2)}
+tbody td{font-family:'IBM Plex Mono';font-variant-numeric:tabular-nums}
+tbody tr:hover{background:rgba(124,34,48,.035)}
+.note{font-size:10.5px;color:var(--muted);line-height:1.5;margin-top:8px;border-top:1px dotted var(--rule);padding-top:8px}
+.note b{color:var(--ox2)}
+.stk{display:flex;flex-direction:column;gap:16px}
+footer{max-width:1380px;margin:0 auto;padding:6px 20px 28px;font-size:10px;color:var(--muted);line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>The Chancellor's <i>Ledger</i></h1>
+    <p>UK Fiscal Sandbox · static incidence model · 2025–26 baseline</p>
+  </div>
+  <div class="hl">
+    <div class="pill"><div class="lab">Overall balance</div><div class="val" id="hl-bal">—</div></div>
+    <div class="pill"><div class="lab">Current balance</div><div class="val" id="hl-cur">—</div></div>
+    <div class="pill"><div class="lab">Debt/GDP yr 5</div><div class="val" id="hl-debt">—</div></div>
+    <button class="btn g" id="btn-export">Copy scenario</button>
+    <button class="btn" id="btn-reset">Reset</button>
+  </div>
+</header>
+<div class="wrap">
+  <div class="panel"><div class="hd"><h2>Policy levers</h2></div><div class="bd" id="controls"></div></div>
+  <div class="stk">
+    <div class="cards" id="cards"></div>
+    <div class="panel">
+      <div class="hd"><h2>Five-year projection</h2>
+        <div class="seg" id="cht"><button data-c="bal" class="on">Balance</button><button data-c="cur">Current</button><button data-c="debt">Debt/GDP</button></div>
+      </div>
+      <div class="bd">
+        <svg id="chart" viewBox="0 0 640 190" width="100%" height="190" preserveAspectRatio="none" style="display:block;margin-bottom:6px"></svg>
+        <table id="proj">
+          <thead><tr><th>Year</th><th>GDP</th><th>Receipts</th><th>Spending</th><th>Overall bal.</th><th>Current bal.</th><th>Debt</th><th>Debt/GDP</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="note"><b>Model:</b> Tax effects use HMRC ready-reckoner coefficients. Receipts scale with nominal GDP (real growth + inflation). Non-interest spending grows at inflation + real-spend assumption; capital investment grows with nominal GDP. Debt interest = blended rate × prior-year debt. <b>No behavioural, growth or investment feedback.</b> Current balance = receipts − (spending excl. capital investment). Overall balance drives debt. Fiscal rules: current budget surplus + debt/GDP falling in yr 5.</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="hd"><h2>Effect on disposable income</h2><span class="sub">employee · IT & employee NIC only</span></div>
+      <div class="bd">
+        <table id="dist">
+          <thead><tr><th>Gross pay</th><th>Net (baseline)</th><th>Net (policy)</th><th>Δ / year</th><th>Δ %</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="note" id="dnote"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  Baselines: OBR EFO March 2025 / Nov 2025 (receipts £1,235bn, TME £1,368bn, deficit £133bn, debt £2,881bn / 94.3% GDP). Tax coefficients: HMRC <i>Direct effects of illustrative tax changes</i> June 2025. Welfare: HoL Library / OBR / DWP 2025-26 forecasts. Pension relief cost: HMRC Tax Relief Statistics Jan 2026. Capital/resource split: OBR DELs (RDEL £481bn, CDEL £111bn); total capital investment £157bn. All coefficients are in the <code>TAX_GROUPS</code> constant — update from each new HMRC bulletin. Illustrative model; not advice.
+</footer>
+<script>
+"use strict";
+/* ============================================================
+   CONFIGURATION — update baselines & coefficients here
+   All £ in £bn unless stated
+   ============================================================ */
+const BASE = {
+  gdp: 3055,      // nominal GDP 2025-26, £bn (OBR)
+  debt: 2881,     // PSND end-2025-26 £bn (~94.3% GDP)
+  receipts: 1235, // current receipts, £bn
+  tme: 1368,      // total managed expenditure
+  interest0: 110  // net debt interest, £bn (≈3.8% of debt)
+};
+const MACRO0 = {realGrowth:1.5, inflation:2.0, intRate:3.8, spendReal:0.0, horizon:5};
+
+/* TAX_GROUPS: grouped levers
+   lever = [id, label, base, min, max, step, per, unit, coeff, note]
+   impact = ((val-base)/per) * coeff  (£bn on receipts; positive = more revenue)     */
+const TAX_GROUPS = [
+  {id:"it", label:"Income Tax", levers:[
+    ["itBasic",  "Basic rate",                           20,  15,  30,   1,    1,  "%",    7.0,  "+1p ≈ £7.0bn (HMRC ready reckoner June 2025)"],
+    ["itHigher", "Higher rate",                          40,  35,  55,   1,    1,  "%",    1.6,  "+1p ≈ £1.6bn"],
+    ["itAddl",   "Additional rate",                      45,  40,  60,   1,    1,  "%",    0.15, "+1p ≈ £0.15bn"],
+    ["pa",       "Personal allowance",               12570,8000,20000, 500, 1000,  "£",   -7.0,  "+£1,000 loses ≈£7.0bn. Frozen to April 2031."],
+    ["hrt",      "Higher-rate threshold",            50270,40000,80000,1000,1000,  "£",   -1.0,  "+£1,000 loses ≈£1.0bn (coarse). Frozen to April 2031."],
+    ["pensionRelief","Pension relief rate cap",          28,  15,  35,   1,    1,  "%",   -1.5,  "EET system; avg effective relief ≈28%. IT cost ~£32bn/yr (total incl NICs: £59bn). Lower cap → revenue gain. Cap at 20% ≈ +£12bn."],
+  ]},
+  {id:"ni", label:"National Insurance", levers:[
+    ["niMain",  "Employee NIC — main rate",    8, 0, 15, 1, 1, "%",  5.0, "+1ppt ≈ £5.0bn"],
+    ["niUpper", "Employee NIC — upper rate",   2, 0, 10, 1, 1, "%",  0.9, "+1ppt ≈ £0.9bn"],
+    ["erNic",   "Employer NIC rate",          15, 0, 20, 1, 1, "%",  8.5, "+1ppt ≈ £8.5bn. 0% = full abolition (~−£127bn)."],
+  ]},
+  {id:"vat", label:"VAT", levers:[
+    ["vat",      "Standard rate",                      20, 10, 27, 1, 1, "%",  8.8, "+1ppt ≈ £8.8bn"],
+    ["vatProc",  "Processed food rate (currently 0%)",  0,  0, 25, 1, 1, "%",  0.8, "Currently zero-rated. +1ppt ≈ £0.8bn. Excludes items already standard-rated (crisps, confectionery, hot food)."],
+    ["vatFresh", "Fresh/unprocessed food rate (currently 0%)", 0, 0, 25, 1, 1, "%", 0.8, "Milk, bread, fresh meat, fruit & veg (zero per Steve's definition). +1ppt ≈ £0.8bn."],
+  ]},
+  {id:"biz", label:"Business Taxes", levers:[
+    ["corpSmall","Corp. tax — small profits rate (≤£50k profits)", 19, 0, 50, 1, 1, "%", 0.4, "+1ppt ≈ £0.4bn. Marginal relief band £50k–£250k not separately modelled."],
+    ["corpMain", "Corp. tax — main rate (>£250k profits)",         25, 0, 50, 1, 1, "%", 3.4, "+1ppt ≈ £3.4bn"],
+    ["cgt",      "CGT rate",                                       24, 10, 60, 1, 1, "%", 0.4, "+1ppt ≈ £0.4bn. Highly behaviourally sensitive, especially above ~35%."],
+    ["cgtAea",   "CGT annual exempt amount",                     3000,  0,12300,250,1000,"£",-0.4,"+£1,000 loses ≈£0.4bn. Current: £3,000 (cut from £12,300)."],
+    ["sdlt",     "SDLT — change in residential rates",              0, -2,  5, 1,  1, "ppt Δ", 2.0, "Lever = change from current schedule. +1ppt across all bands ≈ £2.0bn."],
+  ]},
+  {id:"other", label:"Other Taxes", levers:[
+    ["fuel",        "Fuel duty",                  52.95, 30, 90,  1, 1, "p/l", 0.5, "+1p/litre ≈ £0.5bn"],
+    ["counciltax",  "Council tax (avg level)",      100, 80,150,  5, 1, "%",   0.5, "+1% ≈ £0.5bn"],
+    ["iht",         "Inheritance tax rate",          40, 20, 60,  1, 1, "%",   0.2, "+1ppt ≈ £0.2bn (coarse)"],
+  ]},
+];
+
+/* SPEND_GROUPS: [id, label, £bn, type]
+   type: "ame"=annually managed | "rdel"=resource DEL | "cdel"=capital DEL
+   Capital item ("cdel") is excluded from current spending in fiscal-rule calculations.
+   Total ex-interest should sum to TME − interest0 = 1258.                            */
+const SPEND_GROUPS = [
+  {id:"pens",  label:"Pensioner benefits", areas:[
+    ["statePension",  "State pension",                                      146, "ame"],
+    ["pensionCredit", "Pension credit & other pensioner benefits",           18, "ame"],
+  ]},
+  {id:"welf",  label:"Welfare — working age & disability", areas:[
+    ["uc",          "Universal Credit",                                      68, "ame"],
+    ["housBen",     "Legacy housing benefit",                                15, "ame"],
+    ["disability",  "Disability benefits (PIP, DLA, Attendance Allowance)", 45, "ame"],
+    ["ucHealth",    "UC health / incapacity element",                        20, "ame"],
+    ["childBen",    "Child Benefit",                                         13, "ame"],
+    ["otherWelf",   "Other welfare (carers, bereavement, maternity, etc.)",   9, "ame"],
+  ]},
+  {id:"hlth",  label:"Health",                    areas:[["health",  "Health (NHS)",                     260, "rdel"]]},
+  {id:"educ",  label:"Education",                 areas:[["educ",    "Education",                         128, "rdel"]]},
+  {id:"def",   label:"Defence",                   areas:[["defence", "Defence",                            72, "rdel"]]},
+  {id:"econ",  label:"Economic affairs & transport",areas:[["econ",  "Economic affairs incl. transport",  90, "rdel"]]},
+  {id:"cap",   label:"Capital investment (CDEL)", areas:[["capInvest","Public sector capital investment", 157, "cdel"]]},
+  {id:"ord",   label:"Public order & safety",     areas:[["order",   "Public order & safety",             48, "rdel"]]},
+  {id:"henv",  label:"Housing & environment",     areas:[["housenv", "Housing & environment (resource)",  35, "rdel"]]},
+  {id:"misc",  label:"Other spending", areas:[
+    ["culture",    "Recreation, culture & religion",      15, "rdel"],
+    ["genpub",     "General public services (ex-interest)",42,"rdel"],
+    ["otherSpend", "Other & accounting adjustments",      77, "rdel"],
+  ]},
+];
+// Verify: 146+18+68+15+45+20+13+9+260+128+72+90+157+48+35+15+42+77 = 1258 ✓
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let tax={}, spend={}, macro={};
+function initState(){
+  tax={}; TAX_GROUPS.forEach(g=>g.levers.forEach(l=>tax[l[0]]=l[2]));
+  spend={}; SPEND_GROUPS.forEach(g=>g.areas.forEach(a=>spend[a[0]]=a[2]));
+  macro=Object.assign({},MACRO0);
+}
+
+/* ============================================================
+   ENGINE
+   ============================================================ */
+function taxDelta(){
+  let d=0;
+  TAX_GROUPS.forEach(g=>g.levers.forEach(l=>{
+    const [id,,base,,,,per,,coeff]=l;
+    d+=((tax[id]-base)/per)*coeff;
+  }));
+  return d;
+}
+function spendTotal(){ return SPEND_GROUPS.reduce((s,g)=>s+g.areas.reduce((a,r)=>a+spend[r[0]],0),0); }
+function capitalBase(){ return spend["capInvest"]; }
+function currentSpendBase(){ return spendTotal()-capitalBase(); } // resource + AME excl. capital
+
+function project(){
+  const yrs=Math.round(macro.horizon);
+  const nomG=(macro.realGrowth+macro.inflation)/100;
+  const infl=macro.inflation/100;
+  const sReal=macro.spendReal/100;
+  const r=macro.intRate/100;
+  const recv0=BASE.receipts+taxDelta();
+  const curSpend0=currentSpendBase();  // resource/AME non-capital at yr0 prices
+  const cap0=capitalBase();            // capital at yr0 prices
+  let gdp=BASE.gdp, debtPrev=BASE.debt, debt=BASE.debt;
+  const rows=[];
+  for(let y=0;y<=yrs;y++){
+    if(y>0) gdp=gdp*(1+nomG);
+    const gs=gdp/BASE.gdp;
+    const receipts=recv0*gs;
+    const curSpend=curSpend0*Math.pow(1+infl+sReal,y);  // current grows with inflation
+    const capSpend=cap0*gs;                               // capital grows with nominal GDP
+    const interest=(y===0)?BASE.interest0:r*debtPrev;
+    const totalSpend=curSpend+capSpend+interest;
+    const overallBal=receipts-totalSpend;
+    const currentBal=receipts-(curSpend+interest);       // day-to-day balance
+    debt=(y===0)?BASE.debt:debtPrev-overallBal;
+    rows.push({y,yr:fy(y),gdp,receipts,totalSpend,overallBal,currentBal,debt,ratio:debt/gdp*100,interest});
+    debtPrev=debt;
+  }
+  return rows;
+}
+function fy(y){const s=2025+y;return s+"–"+String(s+1).slice(2);}
+
+/* Distributional: exact IT + employee NIC take-home */
+function itDue(g,s){
+  let pa=s.pa; if(g>100000) pa=Math.max(0,s.pa-(g-100000)/2);
+  const ti=Math.max(0,g-pa); let t=0;
+  const bb=Math.max(0,s.hrt-pa);
+  t+=Math.min(ti,bb)*s.itBasic/100;
+  const ab=Math.max(0,125140-s.hrt);
+  t+=Math.min(Math.max(0,ti-bb),ab)*s.itHigher/100;
+  t+=Math.max(0,ti-bb-ab)*s.itAddl/100;
+  return t;
+}
+function niDue(g,s){
+  let n=0;
+  n+=Math.min(Math.max(0,g-12570),50270-12570)*s.niMain/100;
+  n+=Math.max(0,g-50270)*s.niUpper/100;
+  return n;
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const gbp=(v,dp=0)=>(v<0?"−£":"£")+Math.abs(v).toLocaleString("en-GB",{minimumFractionDigits:dp,maximumFractionDigits:dp})+"bn";
+const f0=v=>v.toLocaleString("en-GB",{maximumFractionDigits:0});
+
+function buildControls(){
+  let h="";
+  // Macro group
+  h+=`<details class="grp" open><summary>Macro assumptions <span class="gsum"></span></summary>`;
+  const MD=[
+    ["realGrowth","Real growth (post-inflation)","%",-2,4,0.1,"Nominal GDP growth = real growth + inflation. No behavioural feedback from policy."],
+    ["inflation","Inflation / GDP deflator","%",0,8,0.1,"Scales non-interest spending and receipts growth path."],
+    ["intRate","Avg effective rate on debt stock","%",0,8,0.1,"Blended portfolio avg of all outstanding gilts — NOT the marginal 10-yr yield (~4.5% in 2026). See OBR EFO Table 2.35 or DMO quarterly publications for current figure."],
+    ["spendReal","Real spending growth (all resource areas)","%",-4,4,0.1,"Applies to non-capital, non-interest spending above inflation."],
+    ["horizon","Projection horizon","yr",1,10,1,""]
+  ];
+  MD.forEach(([id,lab,u,mn,mx,st,note])=>{
+    h+=`<div class="lev"><div class="ln">${lab}<small>${note}</small></div>
+        <div class="lv" id="v-${id}"></div>
+        <input type="range" data-k="macro" data-id="${id}" min="${mn}" max="${mx}" step="${st}" value="${macro[id]}"></div>`;
+  });
+  h+="</details>";
+
+  // Tax groups
+  TAX_GROUPS.forEach(g=>{
+    h+=`<details class="grp"><summary>${g.label} <span class="gsum" id="gs-${g.id}"></span></summary>`;
+    g.levers.forEach(l=>{
+      const[id,lab,base,mn,mx,st,per,u,,note]=l;
+      h+=`<div class="lev"><div class="ln">${lab}<small>${note}</small></div>
+          <div class="lv" id="v-${id}"></div><div class="li" id="i-${id}"></div>
+          <input type="range" data-k="tax" data-id="${id}" min="${mn}" max="${mx}" step="${st}" value="${tax[id]}"></div>`;
+    });
+    h+="</details>";
+  });
+
+  // Spend groups
+  SPEND_GROUPS.forEach(g=>{
+    h+=`<details class="grp"><summary>${g.label} <span class="gsum" id="gs-${g.id}"></span></summary>`;
+    g.areas.forEach(a=>{
+      const[id,lab,base,,type]=a;
+      const tag={ame:"AME",rdel:"RDEL",cdel:"CDEL"}[type];
+      const mn=Math.max(0,Math.round(base*0.4)), mx=Math.round(base*1.8)+5;
+      h+=`<div class="lev"><div class="ln">${lab}<span class="type-tag t-${type}">${tag}</span></div>
+          <div class="lv" id="v-${id}"></div><div class="li" id="i-${id}"></div>
+          <input type="range" data-k="spend" data-id="${id}" min="${mn}" max="${mx}" step="1" value="${spend[id]}"></div>`;
+    });
+    h+="</details>";
+  });
+
+  document.getElementById("controls").innerHTML=h;
+  document.getElementById("controls").querySelectorAll("input[type=range]").forEach(i=>i.addEventListener("input",onInput));
+}
+
+function onInput(e){
+  const k=e.target.dataset.k,id=e.target.dataset.id,v=parseFloat(e.target.value);
+  if(k==="macro") macro[id]=v; else if(k==="tax") tax[id]=v; else spend[id]=v;
+  render();
+}
+
+function render(){
+  // Macro readouts
+  ["realGrowth","inflation","intRate","spendReal"].forEach(id=>{
+    const el=document.getElementById("v-"+id); if(el) el.textContent=(macro[id]>0?"+":"")+macro[id].toFixed(1)+"%";
+  });
+  const hEl=document.getElementById("v-horizon"); if(hEl) hEl.textContent=macro.horizon+" yr";
+
+  // Tax lever readouts + group sums
+  const gSums={};
+  TAX_GROUPS.forEach(g=>{
+    let gs=0;
+    g.levers.forEach(l=>{
+      const[id,lab,base,,,,per,u,coeff]=l;
+      const val=tax[id], imp=((val-base)/per)*coeff; gs+=imp;
+      const vEl=document.getElementById("v-"+id);
+      if(vEl) vEl.textContent=u==="£"?"£"+f0(val):u==="p/l"?val.toFixed(2)+"p":u==="ppt Δ"?(val>=0?"+":"")+val+"pp":val+"%";
+      const iEl=document.getElementById("i-"+id);
+      if(iEl){iEl.textContent=(Math.abs(imp)<0.05?"—":(imp>=0?"+":"")+gbp(imp,1));iEl.className="li "+(Math.abs(imp)<0.05?"":imp>0?"pos":"neg");}
+    });
+    gSums[g.id]=gs;
+    const gEl=document.getElementById("gs-"+g.id);
+    if(gEl){gEl.textContent=(gs>=0?"+":"")+gbp(gs,1);gEl.className="gsum "+(Math.abs(gs)<0.05?"":gs>0?"pos":"neg");}
+  });
+
+  // Spend lever readouts + group sums
+  SPEND_GROUPS.forEach(g=>{
+    let gs=0;
+    g.areas.forEach(a=>{
+      const[id,lab,base]=a; const val=spend[id], d=val-base; gs+=d;
+      const vEl=document.getElementById("v-"+id); if(vEl) vEl.textContent="£"+f0(val)+"bn";
+      const iEl=document.getElementById("i-"+id);
+      if(iEl){iEl.textContent=d===0?"—":(d>0?"+":"")+gbp(d,0);iEl.className="li "+(d===0?"":d<0?"pos":"neg");}
+    });
+    const gEl=document.getElementById("gs-"+g.id);
+    if(gEl){gEl.textContent=(gs>=0?"+":"")+gbp(gs,0);gEl.className="gsum "+(Math.abs(gs)<0.5?"":gs<=0?"pos":"neg");}
+  });
+
+  // Projection
+  const rows=project();
+  const y0=rows[0], yN=rows[rows.length-1];
+
+  // Header pills
+  const balEl=document.getElementById("hl-bal");
+  balEl.textContent=gbp(y0.overallBal,0);
+  balEl.className="val "+(y0.overallBal>=0?"pos":"neg");
+  const curEl=document.getElementById("hl-cur");
+  curEl.textContent=gbp(y0.currentBal,0);
+  curEl.className="val "+(y0.currentBal>=0?"pos":"neg");
+  document.getElementById("hl-debt").textContent=yN.ratio.toFixed(1)+"%";
+
+  // Cards
+  const baseOverall=-133, baseCurrent=BASE.receipts-(currentSpendBase()+BASE.interest0);
+  const baseDebtR=BASE.debt/BASE.gdp*100;
+  const cards=[
+    {lab:"Receipts · "+y0.yr, big:gbp(y0.receipts,0), d:y0.receipts-BASE.receipts, goodUp:true, cls:""},
+    {lab:"Current balance · "+y0.yr, big:gbp(y0.currentBal,0), d:y0.currentBal-baseCurrent, goodUp:true, cls:"curr"},
+    {lab:"Overall balance · "+y0.yr, big:gbp(y0.overallBal,0), d:y0.overallBal-baseOverall, goodUp:true, cls:""},
+    {lab:"Debt/GDP · "+yN.yr, big:yN.ratio.toFixed(1)+"%", d:yN.ratio-baseDebtR, goodUp:false, cls:""},
+  ];
+  document.getElementById("cards").innerHTML=cards.map(c=>{
+    let dtxt,dcls;
+    if(c.lab.startsWith("Debt")){dtxt=(c.d>=0?"+":"")+c.d.toFixed(1)+"pp vs base";dcls=c.d<=0?"pos":"neg";}
+    else{dtxt=(c.d>=0?"+":"")+gbp(c.d,0)+" vs base";dcls=((c.goodUp?c.d:-c.d)>=0)?"pos":"neg";}
+    return `<div class="card ${c.cls}"><div class="lab">${c.lab}</div><div class="big">${c.big}</div><div class="dlt ${dcls}">${dtxt}</div></div>`;
+  }).join("");
+
+  // Projection table
+  document.querySelector("#proj tbody").innerHTML=rows.map(r=>
+    `<tr><td>${r.yr}</td><td>${f0(r.gdp)}</td><td>${f0(r.receipts)}</td><td>${f0(r.totalSpend)}</td>
+     <td class="${r.overallBal>=0?"pos":"neg"}">${r.overallBal>=0?"+":""}${f0(r.overallBal)}</td>
+     <td class="${r.currentBal>=0?"pos":"neg"}">${r.currentBal>=0?"+":""}${f0(r.currentBal)}</td>
+     <td>${f0(r.debt)}</td><td>${r.ratio.toFixed(1)}%</td></tr>`
+  ).join("");
+
+  drawChart(rows);
+  renderDist();
+}
+
+let chartMode="bal";
+function drawChart(rows){
+  const svg=document.getElementById("chart"); const W=640,H=190,pad=36;
+  const xs=i=>pad+(W-pad-12)*(i/(rows.length-1));
+  let vals;
+  if(chartMode==="bal") vals=rows.map(r=>r.overallBal);
+  else if(chartMode==="cur") vals=rows.map(r=>r.currentBal);
+  else vals=rows.map(r=>r.ratio);
+  const isRatio=chartMode==="debt";
+  let mn=Math.min(...vals), mx=Math.max(...vals);
+  if(!isRatio){mn=Math.min(mn,0);mx=Math.max(mx,0);}
+  if(mn===mx){mn-=1;mx+=1;}
+  const range=mx-mn;
+  const ys=v=>H-pad-(H-pad-16)*((v-mn)/range);
+  let g="";
+  if(!isRatio){
+    const z=ys(0);
+    g+=`<line x1="${pad}" y1="${z}" x2="${W-12}" y2="${z}" stroke="${z===H-pad?"none":"#cabda6"}" stroke-width="1" stroke-dasharray="3 3"/>`;
+    const bw=(W-pad-12)/rows.length*0.58;
+    rows.forEach((r,i)=>{
+      const v=chartMode==="cur"?r.currentBal:r.overallBal;
+      const x=xs(i)-bw/2,top=Math.min(z,ys(v)),hh=Math.abs(ys(v)-z);
+      g+=`<rect x="${x}" y="${top}" width="${bw}" height="${Math.max(hh,1)}" fill="${v>=0?"#2f6b4f":"#a8323f"}" opacity=".82"/>`;
+      g+=`<text x="${xs(i)}" y="${H-5}" text-anchor="middle" style="font-size:9px;fill:#6b6256">${r.yr.slice(0,4)}</text>`;
+    });
+  } else {
+    const d=rows.map((r,i)=>`${i?"L":"M"}${xs(i).toFixed(1)} ${ys(r.ratio).toFixed(1)}`).join(" ");
+    g+=`<path d="${d}" fill="none" stroke="#7d2230" stroke-width="2"/>`;
+    rows.forEach((r,i)=>{
+      g+=`<circle cx="${xs(i)}" cy="${ys(r.ratio)}" r="3" fill="#7d2230"/>`;
+      g+=`<text x="${xs(i)}" y="${H-5}" text-anchor="middle" style="font-size:9px;fill:#6b6256">${r.yr.slice(0,4)}</text>`;
+    });
+  }
+  [mn,(mn+mx)/2,mx].forEach(v=>{
+    g+=`<text x="2" y="${ys(v)+3}" style="font-size:9px;fill:#6b6256;font-family:'IBM Plex Mono'">${isRatio?v.toFixed(0)+"%":f0(v)}</text>`;
+  });
+  svg.innerHTML=g;
+}
+
+function renderDist(){
+  const INCOMES=[15000,20000,30000,37000,50000,75000,100000,125000,150000,200000];
+  const bs={pa:12570,hrt:50270,itBasic:20,itHigher:40,itAddl:45,niMain:8,niUpper:2};
+  const ns={pa:tax.pa,hrt:tax.hrt,itBasic:tax.itBasic,itHigher:tax.itHigher,itAddl:tax.itAddl,niMain:tax.niMain,niUpper:tax.niUpper};
+  const vatD=tax.vat-20;
+  document.querySelector("#dist tbody").innerHTML=INCOMES.map(g=>{
+    const net0=g-itDue(g,bs)-niDue(g,bs);
+    let net1=g-itDue(g,ns)-niDue(g,ns);
+    const cShare=Math.max(0.35,0.95-(g/280000));
+    net1-=net1*cShare*(vatD/100)/(1+20/100);
+    const d=net1-net0,pct=d/net0*100;
+    return `<tr><td>£${f0(g)}</td><td>£${f0(net0)}</td><td>£${f0(net1)}</td>
+      <td class="${d>=0?"pos":"neg"}">${d>=0?"+":`−`}£${f0(Math.abs(d))}</td>
+      <td class="${d>=0?"pos":"neg"}">${d>=0?"+":""}${pct.toFixed(2)}%</td></tr>`;
+  }).join("");
+  document.getElementById("dnote").innerHTML=`Exact IT (incl. PA taper above £100k) and employee NIC take-home. Includes a <b>rough</b> VAT standard-rate pass-through using an assumed consumption share falling with income. Employer NIC, processed/fresh food VAT, corp tax, CGT, pension relief cap, SDLT and all indirect incidence beyond standard VAT are <b>not</b> passed through here.`;
+}
+
+document.getElementById("btn-reset").addEventListener("click",()=>{initState();buildControls();render();});
+document.getElementById("btn-export").addEventListener("click",()=>{
+  const blob=JSON.stringify({tax,spend,macro},null,1);
+  if(navigator.clipboard) navigator.clipboard.writeText(blob).then(()=>{
+    const b=document.getElementById("btn-export"),o=b.textContent;
+    b.textContent="Copied ✓"; setTimeout(()=>b.textContent=o,1600);
+  }); else alert(blob);
+});
+document.querySelectorAll("#cht button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#cht button").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on"); chartMode=b.dataset.c; drawChart(project());
+}));
+
+initState(); buildControls(); render();
+</script>
+</body>
+</html>
 
